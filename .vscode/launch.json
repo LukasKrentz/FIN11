@@ -1,13 +1,38 @@
 {
     "version": "0.2.0",
     "configurations": [
-        {
-            //start in dev mode
+        {//start
+            "name": "Start",
+            "request": "launch",
+            "runtimeArgs": [
+                "run-script", 
+                "start"
+            ],
+            "runtimeExecutable": "npm",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node"
+        },
+        {//start in dev mode
             "name": "DEV Start",
             "request": "launch",
             "runtimeArgs": [
                 "run-script", 
                 "start-dev"
+            ],
+            "runtimeExecutable": "npm",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node"
+        },
+        {//build
+            "name": "Build",
+            "request": "launch",
+            "runtimeArgs": [
+                "run-script", 
+                "build"
             ],
             "runtimeExecutable": "npm",
             "skipFiles": [

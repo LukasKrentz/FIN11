@@ -4,7 +4,9 @@
   "description": "Klassenprojekt",
   "main": "index.js",
   "scripts": {
-    "start-dev": "ts-node src/client.ts"
+    "start-dev": "ts-node src/client.ts",
+    "start": "tsc && node build/client.js",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
