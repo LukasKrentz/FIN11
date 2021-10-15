@@ -7,7 +7,7 @@ import { Client } from "discordx";
 interface IConfig{
     token: string
 }
-const config:IConfig = JSON.parse(fs.readFileSync(path.join(__filename, 'config.json')).toString());
+const config:IConfig = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json')).toString());
 
 //creating the discordx Client
 const client = new Client({
