@@ -1,4 +1,7 @@
 module.exports = {
+    "env": {
+        "node": true
+    },    
     "extends": [
         "eslint:recommended",
         "plugin:@typescript-eslint/recommended"
@@ -6,9 +9,12 @@ module.exports = {
     "parser": "@typescript-eslint/parser",
     "plugins": ["@typescript-eslint"],
     "rules": {
-        "javascript.validate.enable": false,
-        "@typescript-eslint/no-unused-vars": "error",
-        "@typescript-eslint/no-explicit-any": "error"
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": ["error", { "varsIgnorePattern": "Command" }],
+        "@typescript-eslint/no-explicit-any": "error",
+        "strict": [2, "global"],
+        "no-undef": 0,
+        "semi": [2, "always"],
     },
     "ignorePatterns": ["src/**/*.test.ts"]
-}
+};

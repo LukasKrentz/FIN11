@@ -1,15 +1,9 @@
 //created by Kevin - (https://github.com/Kyukishi)
 
-import fs from "fs";
 import path from "path";
 import { Intents, Interaction, Message } from "discord.js";
 import { Client } from "discordx";
-
-//read config from config.json
-interface IConfig{
-    token: string
-}
-const config:IConfig = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json')).toString());
+import config from "./config/config";
 
 //creating the discordx Client
 const client = new Client({
