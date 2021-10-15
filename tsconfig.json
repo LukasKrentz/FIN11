@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+      "target": "ESNext",
+      "module": "commonjs",
+      "outDir": "./build" /* output dir */,
+      "rootDir": "./src" /* input dir */,
+      "strict": true,
+      "esModuleInterop": true,
+  
+      /* ES7 decirators */
+      "experimentalDecorators": true,
+  
+      /* skip checking for declaration files & disallow inconsistently-cased references to the same file */
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true
+    }
+}

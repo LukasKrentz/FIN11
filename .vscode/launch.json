@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            //start in dev mode
+            "name": "DEV Start",
+            "request": "launch",
+            "runtimeArgs": [
+                "run-script", 
+                "start-dev"
+            ],
+            "runtimeExecutable": "npm",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node"
+        }
+    ]
+}
