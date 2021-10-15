@@ -1,3 +1,5 @@
+//created by Kevin - (https://github.com/Kyukishi)
+
 import fs from "fs";
 import path from "path";
 import { Intents, Interaction, Message } from "discord.js";

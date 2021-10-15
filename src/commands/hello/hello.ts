@@ -1,3 +1,5 @@
+//created by Kevin - (https://github.com/Kyukishi)
+
 //simple hello command
 import{
     Discord,
