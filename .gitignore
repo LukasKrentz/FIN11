@@ -1,0 +1,8 @@
+# node js
+/node_modules/
+
+# build dir
+/build/
+
+# macOS stuff
+.DS_Store
