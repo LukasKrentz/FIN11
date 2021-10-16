@@ -5,11 +5,11 @@ import{
     Discord,
     SimpleCommand,
     SimpleCommandMessage,
-}from "discordx";
+}from 'discordx';
 
 @Discord()
 class helloCommand{
-    @SimpleCommand("hello", {aliases: ["hi"]})
+    @SimpleCommand('hello', {aliases: ['hi']})
     hello(command: SimpleCommandMessage){
         command.message.reply(`👋 ${command.message.member}`);
     }
