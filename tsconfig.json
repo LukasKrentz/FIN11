@@ -1,22 +1,22 @@
 {
     "compilerOptions": {
-      "target": "ESNext",
-      "module": "commonjs",
-      "outDir": "./build" /* output dir */,
-      "rootDir": "./src" /* input dir */,
-      "strict": true,
-      "esModuleInterop": true,
-      "resolveJsonModule": true,
-  
-      /* ES7 decirators */
-      "experimentalDecorators": true,
-  
-      /* skip checking for declaration files & disallow inconsistently-cased references to the same file */
-      "skipLibCheck": true,
-      "forceConsistentCasingInFileNames": true
+		"target": "ESNext",
+		"module": "commonjs",
+		"outDir": "./build" /* output dir */,
+		"rootDir": "./src" /* input dir */,
+		"strict": true,
+		"esModuleInterop": true,
+		"resolveJsonModule": true,
+	
+		/* ES7 decirators */
+		"experimentalDecorators": true,
+	
+		/* skip checking for declaration files & disallow inconsistently-cased references to the same file */
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true
     },
     "include": [//include files
-      "src/**/*",
-      "src/**/*.json",
+		"src/**/*",
+		"src/**/*.json",
     ],
 }

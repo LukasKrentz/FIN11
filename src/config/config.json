@@ -1,3 +1,13 @@
 {
-    "token": "paste your token here"
+    "token": "paste your token here",
+    "server": "server id",
+    "channels": {
+        "whitelistedChannels": ["channel id"],
+        "blacklistedChannels": ["channel id"],
+        "logs": "channel id",
+        "todos": "channel id",
+        "polls": "channel id",
+        "alerts": "channel id"
+    },
+    "allowAllChannels": "(number or boolean only) 0 or true: allow all channels | 1: only whitelisted channels | 2: all but blacklisted channels"
 }
