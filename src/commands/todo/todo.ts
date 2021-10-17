@@ -213,6 +213,7 @@ class todoCommand{
                     if(typeof todoContent.category !== 'undefined' && typeof todoContent.expires !== 'undefined' && typeof todoContent.content !== 'undefined'){
                         const guild = client.guilds.cache.find(guild => guild.id === config.server);
                         const member = await guild?.members.fetch(commandMsg.author.id);
+                        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                         const embed = new TodoEmbed(todoContent.category, todoContent.expires, todoContent.content, {name: member!.displayName, iconURL: commandMsg.author.avatarURL()});
                         const question = await commandMsg.reply(`das nach <#${channels.todos?.id}> senden?`);
                         question.embeds.push(embed);
@@ -237,6 +238,7 @@ class todoCommand{
                         checkout();
                         const guild = client.guilds.cache.find(guild => guild.id === config.server);
                         const member = await guild?.members.fetch(commandMsg.author.id);
+                        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                         const embed = new TodoEmbed(<string>todoContent.category, <Date>todoContent.expires, <string>todoContent.content, {name: member!.displayName, iconURL: commandMsg.author.avatarURL()});
                         channels.todos?.send({embeds: [embed]});
                         commandMsg.reply(`send to <#${channels.todos?.id}>`);
