@@ -2,24 +2,50 @@
 
 import process from 'process';
 import path from 'path';
-import { Intents, Interaction, Message } from 'discord.js';
+import { Intents, Interaction, Message, MessageEmbed, TextChannel } from 'discord.js';
 import { Client } from 'discordx';
 import config from './config/config';
+import { IGlobal } from './types/global';
+declare const global: IGlobal;
+
+global.channels = {
+	whitelistedChannels: [],
+	blacklistedChannels: [],
+	logs: undefined,
+	todos: undefined,
+	polls: undefined,
+	alerts: undefined,
+};
 
 //catching errors globally
 process.on('uncaughtException', function(err){
 	console.error(err);
-	try{
-		const channel = client.channels.cache.find(channel => channel.id === config.channels.logs);
+	//send a discord message in the logs channel
+	if(typeof channels.logs !== 'undefined'){
+		const embed = new MessageEmbed()
+			.setColor('#ff2d55')
+			.setTitle(err.name)
+			.setAuthor('uncaught exception')
+			.addFields(
+				{name: '\u200B', value: '\u200B'},
+				{name: 'Message:', value: err.message},
+				{name: '\u200B', value: '\u200B'}
+			)
+			.setTimestamp();
+				
+		if(typeof err.stack !== 'undefined'){
+			embed.addFields(
+				{name: 'Stacktrace:', value: err.stack},
+				{name: '\u200B', value: '\u200B'}
+			);
+		}
 
-		if(typeof channel !== 'undefined')
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		(channel as any).send(`uncaughtException: ${err.message}`);
-	}catch(e){console.error(e);}
+		channels.logs.send({embeds: [embed]});
+	}
 });
 
 //creating the discordx Client
-const client = new Client({
+global.client = new Client({
     prefix: '/',
     intents: [
 		Intents.FLAGS.GUILDS,
@@ -36,7 +62,48 @@ const client = new Client({
 
 //will be executed when the bot successfully started
 client.once('ready', async()=>{
+	//assigning channels from config.json to global.channels
+	channels.whitelistedChannels = (()=>{
+		const channelList: TextChannel[] = [];
+		config.channels.whitelistedChannels.forEach(id=>{
+			const channel = <TextChannel>client.channels.cache.find(channel => channel.id === id);
+			if(typeof channel !== 'undefined')
+				channelList.push(channel);
+		});
+
+		return channelList;
+	})();
+	channels.blacklistedChannels = (()=>{
+		const channelList: TextChannel[] = [];
+		config.channels.blacklistedChannels.forEach(id=>{
+			const channel = <TextChannel>client.channels.cache.find(channel => channel.id === id);
+			if(typeof channel !== 'undefined')
+				channelList.push(channel);
+		});
+
+		return channelList;
+	})();
+	channels.logs = <TextChannel>client.channels.cache.find(channel => channel.id === config.channels.logs);
+	channels.todos = <TextChannel>client.channels.cache.find(channel => channel.id === config.channels.todos);
+	channels.polls = <TextChannel>client.channels.cache.find(channel => channel.id === config.channels.polls);
+	channels.alerts = <TextChannel>client.channels.cache.find(channel => channel.id === config.channels.alerts);
+
+	//adding "slash commands" to discord
+	/* will cause error atm
+	await client.clearApplicationCommands(config.server);
+	await client.initApplicationCommands({
+		guild: {log: true},
+		global: {log: true},
+	});
+	await client.initApplicationPermissions();
+	*/
+
     console.log('Bot started');
+	const embed = new MessageEmbed()
+		.setColor('#007bff')
+		.setTitle('successfully started!')
+		.setTimestamp();
+	channels.logs?.send({embeds: [embed]});
 });
 
 //will be executed when someone reacts to a message

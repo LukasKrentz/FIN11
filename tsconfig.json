@@ -15,8 +15,11 @@
 		"skipLibCheck": true,
 		"forceConsistentCasingInFileNames": true
     },
+	
+	"files": ["src/types/global.d.ts"],//types
+
     "include": [//include files
 		"src/**/*",
-		"src/**/*.json",
+		"src/**/*.json"
     ],
 }
