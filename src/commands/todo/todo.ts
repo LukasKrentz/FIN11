@@ -2,6 +2,7 @@
 
 import { Discord, SimpleCommand, SimpleCommandMessage, On, ArgsOf } from 'discordx';
 import { MessageEmbed, Message } from 'discord.js';
+import config from '../../config/config';
 
 let commandMsg:Message;
 let replyCount = 0;
@@ -210,7 +211,9 @@ class todoCommand{
                     todoContent.content = message.content;
                     replyCount = 0;
                     if(typeof todoContent.category !== 'undefined' && typeof todoContent.expires !== 'undefined' && typeof todoContent.content !== 'undefined'){
-                        const embed = new TodoEmbed(todoContent.category, todoContent.expires, todoContent.content, {name: commandMsg.author.username, iconURL: commandMsg.author.avatarURL()});
+                        const guild = client.guilds.cache.find(guild => guild.id === config.server);
+                        const member = await guild?.members.fetch(commandMsg.author.id);
+                        const embed = new TodoEmbed(todoContent.category, todoContent.expires, todoContent.content, {name: member!.displayName, iconURL: commandMsg.author.avatarURL()});
                         const question = await commandMsg.reply(`das nach <#${channels.todos?.id}> senden?`);
                         question.embeds.push(embed);
                         question.react('✅');
@@ -227,12 +230,14 @@ class todoCommand{
     @On('messageReactionAdd')
     onReact([reaction]:ArgsOf<'messageReactionAdd'>){
         if(reaction.message.id === checkoutMsgId){
-            reaction.users.fetch().then((users)=>{
+            reaction.users.fetch().then(async(users)=>{
                 if(users.has(authorId))
                 switch(reaction.emoji.name){
                     case'✅':{
                         checkout();
-                        const embed = new TodoEmbed(<string>todoContent.category, <Date>todoContent.expires, <string>todoContent.content, {name: commandMsg.author.username, iconURL: commandMsg.author.avatarURL()});
+                        const guild = client.guilds.cache.find(guild => guild.id === config.server);
+                        const member = await guild?.members.fetch(commandMsg.author.id);
+                        const embed = new TodoEmbed(<string>todoContent.category, <Date>todoContent.expires, <string>todoContent.content, {name: member!.displayName, iconURL: commandMsg.author.avatarURL()});
                         channels.todos?.send({embeds: [embed]});
                         commandMsg.reply(`send to <#${channels.todos?.id}>`);
                     }break;
