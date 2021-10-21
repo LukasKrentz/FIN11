@@ -89,14 +89,9 @@ client.once('ready', async()=>{
 	channels.alerts = <TextChannel>client.channels.cache.find(channel => channel.id === config.channels.alerts);
 
 	//adding "slash commands" to discord
-	/* will cause error atm
 	await client.clearApplicationCommands(config.server);
-	await client.initApplicationCommands({
-		guild: {log: true},
-		global: {log: true},
-	});
+	await client.initApplicationCommands();
 	await client.initApplicationPermissions();
-	*/
 
     console.log('Bot started');
 	const embed = new MessageEmbed()

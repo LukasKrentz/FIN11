@@ -1,13 +1,14 @@
 //created by Kevin - (https://github.com/Kyukishi)
 
-import { Discord, SimpleCommand, SimpleCommandMessage, On, ArgsOf } from 'discordx';
-import { MessageEmbed, Message } from 'discord.js';
+import { Discord, On, ArgsOf, Slash } from 'discordx';
+import { MessageEmbed, Message, CommandInteraction, User, TextChannel } from 'discord.js';
 import config from '../../config/config';
 
-let commandMsg:Message;
+let commandInteraction:CommandInteraction;
 let replyCount = 0;
-let channelId = '';
+let channel:TextChannel;
 let authorId = '';
+let author:User;
 let checkoutMsgId = '';
 let cancelMsgIds:string[] = [];
 let messagesToDelete:Message[] = [];
@@ -69,25 +70,27 @@ function checkout(){
 
 @Discord()
 class todoCommand{
-    @SimpleCommand('todo', {aliases: ['hw', 'homework']})
-    async todo(command: SimpleCommandMessage){
-        commandMsg = command.message;
-        channelId = command.message.channelId;
-        authorId = command.message.author.id;
+    @Slash('todo', {description: 'Erstellt einen Hausaufgaben eintrag'})
+    async todo(command: CommandInteraction){
+        await command.deferReply();
+        commandInteraction = command;
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const question = await command.channel!.send('Fach?');
+        channel = <TextChannel>command.channel;
+        authorId = command.user.id;
+        author = command.user;
         replyCount = 1;
         messagesToDelete = [];
         cancelMsgIds = [];
 
-        await command.message.reply('Fach?').then((msg)=>{
-            messagesToDelete.push(msg);
-            cancelMsgIds.push(msg.id);
-            msg.react('❌');
-        });
+        messagesToDelete.push(question);
+        cancelMsgIds.push(question.id);
+        question.react('❌');
     }
 
     @On('messageCreate')
     async onMessage([message]:ArgsOf<'messageCreate'>){
-        if(message.channelId === channelId && message.author.id === authorId && replyCount > 0){
+        if(typeof channel !== 'undefined' && (message.channelId === channel.id && message.author.id === authorId && replyCount > 0)){
             messagesToDelete.push(message);
             switch(replyCount){
                 //category input
@@ -103,7 +106,7 @@ class todoCommand{
                         }
                     })();
                     replyCount++;
-                    const question = await commandMsg.reply('Abgabedatum?');
+                    const question = await channel.send('Abgabedatum?');
                     messagesToDelete.push(question);
                     cancelMsgIds.push(question.id);
                     question.react('❌');
@@ -195,12 +198,12 @@ class todoCommand{
                     if(typeof expDate !== 'undefined'){
                         todoContent.expires = expDate;
                         replyCount++;
-                        const question = await commandMsg.reply('Inhalt?');
+                        const question = await channel.send('Inhalt?');
                         messagesToDelete.push(question);
                         cancelMsgIds.push(question.id);
                         question.react('❌');
                     }else{
-                        const question = await commandMsg.reply('sorry, kannst du das datum wiederholen? (dd-mm-yyyy) - monat und jahr ist nicht nötig, es geht auch "morgen" etc');
+                        const question = await channel.send('sorry, kannst du das datum wiederholen? (dd-mm-yyyy) - monat und jahr ist nicht nötig, es geht auch "morgen" etc');
                         messagesToDelete.push(question);
                         cancelMsgIds.push(question.id);
                         question.react('❌');
@@ -212,14 +215,14 @@ class todoCommand{
                     replyCount = 0;
                     if(typeof todoContent.category !== 'undefined' && typeof todoContent.expires !== 'undefined' && typeof todoContent.content !== 'undefined'){
                         const guild = client.guilds.cache.find(guild => guild.id === config.server);
-                        const member = await guild?.members.fetch(commandMsg.author.id);
+                        const member = await guild?.members.fetch(author.id);
                         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                        const embed = new TodoEmbed(todoContent.category, todoContent.expires, todoContent.content, {name: member!.displayName, iconURL: commandMsg.author.avatarURL()});
-                        const question = await commandMsg.reply(`das nach <#${channels.todos?.id}> senden?`);
+                        const embed = new TodoEmbed(todoContent.category, todoContent.expires, todoContent.content, {name: member!.displayName, iconURL: author.avatarURL()});
+                        const question = await channel.send(`das nach <#${channels.todos?.id}> senden?`);
                         question.embeds.push(embed);
                         question.react('✅');
                         question.react('❌');
-                        await commandMsg.channel.send({embeds: [embed]}).then((embedMsg)=>messagesToDelete.push(embedMsg));
+                        await channel.send({embeds: [embed]}).then((embedMsg)=>messagesToDelete.push(embedMsg));
                         checkoutMsgId = question.id;
                         messagesToDelete.push(question);
                     }
@@ -236,16 +239,17 @@ class todoCommand{
                 switch(reaction.emoji.name){
                     case'✅':{
                         checkout();
+                        commandInteraction.deleteReply();
                         const guild = client.guilds.cache.find(guild => guild.id === config.server);
-                        const member = await guild?.members.fetch(commandMsg.author.id);
+                        const member = await guild?.members.fetch(author.id);
                         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                        const embed = new TodoEmbed(<string>todoContent.category, <Date>todoContent.expires, <string>todoContent.content, {name: member!.displayName, iconURL: commandMsg.author.avatarURL()});
-                        channels.todos?.send({embeds: [embed]});
-                        commandMsg.reply(`send to <#${channels.todos?.id}>`);
+                        const embed = new TodoEmbed(<string>todoContent.category, <Date>todoContent.expires, <string>todoContent.content, {name: member!.displayName, iconURL: author.avatarURL()});
+                        channels.todos?.send({embeds: [embed]}).then((msg)=>msg.react('✅'));
                     }break;
                     case'❌':{
                         checkout();
-                        commandMsg.reply(`canceled todo creation`);
+                        commandInteraction.deleteReply();
+                        channel.send(`canceled todo creation`);
                     }break;
                 }
             });
@@ -254,7 +258,8 @@ class todoCommand{
                 if(users.has(authorId))
                 if(reaction.emoji.name === '❌'){
                     checkout();
-                    commandMsg.reply(`canceled todo creation`);
+                    commandInteraction.deleteReply();
+                    channel.send(`canceled todo creation`);
                 }
             });
         }
