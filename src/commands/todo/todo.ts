@@ -31,7 +31,7 @@ interface ITodoAuthor{
 class TodoEmbed extends MessageEmbed{
     constructor(category:string, expires:Date, content:string, author:ITodoAuthor){
         super({
-            color: '#007bff',
+            color: '#31bd5d', // shorturl.at/qLQW3 original color:#007bff
             title: 'Hausaufgabe',
             description: `Fach: ${category}`,
             thumbnail: {
